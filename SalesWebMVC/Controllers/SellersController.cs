@@ -31,6 +31,7 @@ namespace SalesWebMVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Seller seller)
         {
+            
             _sellerservice.Insert(seller);
             return RedirectToAction(nameof(Index));
         }
