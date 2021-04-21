@@ -33,7 +33,7 @@ namespace SalesWebMVC.Controllers
             var viewModel = new SellerFormViewModel { Departments = departments };
             return View(viewModel);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Seller seller)
@@ -67,8 +67,15 @@ namespace SalesWebMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _sellerservice.RemoveAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _sellerservice.RemoveAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch(IntegrityException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message }); ;
+            }
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -124,10 +131,10 @@ namespace SalesWebMVC.Controllers
                 await _sellerservice.UpdateAsync(seller);
                 return RedirectToAction(nameof(Index));
             }
-            catch(ApplicationException e)
+            catch (ApplicationException e)
             {
                 return RedirectToAction(nameof(Error), new { message = e.Message }); ;
-            }         
+            }
         }
 
         public IActionResult Error(string message)
